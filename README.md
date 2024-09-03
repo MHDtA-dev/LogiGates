@@ -1,3 +1,5 @@
+![Banner](banner.jpg)
+
 # LogiGates
 
 ## Brief description:
