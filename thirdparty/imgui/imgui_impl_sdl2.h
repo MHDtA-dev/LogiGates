@@ -26,6 +26,10 @@
 #include "imgui.h"      // IMGUI_IMPL_API
 #ifndef IMGUI_DISABLE
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 struct SDL_Window;
 struct SDL_Renderer;
 struct _SDL_GameController;

@@ -18,6 +18,7 @@
 #define LOGIGATES_SPLITTER_H
 
 #include <iostream>
+#include <algorithm>
 #include "Base.h"
 #include "../../UI/Images.h"
 

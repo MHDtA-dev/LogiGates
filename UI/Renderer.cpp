@@ -32,8 +32,11 @@ namespace LogiGates::UI {
 
         windowWidth = window->getWidth();
         windowHeight = window->getHeight();
+
+#ifdef __APPLE__
         lastWindowWidth = windowWidth;
         lastWindowHeight = windowHeight;
+#endif
     }
 
     Renderer::~Renderer() {
