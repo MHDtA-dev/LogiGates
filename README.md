@@ -11,9 +11,7 @@ LogiGates is a simple logical chain simulator. It includes all the basic logic e
 
 ### GNU/Linux (Debian based distros)
 
-1. Install SDL2
-
-`sudo apt install libsdl2-dev`
+1. Install SDL2 `sudo apt install libsdl2-dev`
 
 2. Clone this repository
 `git clone https://github.com/MHDtA-dev/LogiGates.git`
@@ -27,20 +25,14 @@ LogiGates is a simple logical chain simulator. It includes all the basic logic e
   cd build
 ```
 
-5. Run CMake
-`cmake ..`
+5. Run CMake `cmake ..`
 
 6. Build using make or ninja (Depends on your generator)
-`make`
-
-OR
-`ninja`
+`make` OR `ninja`
 
 ### MacOS
 
-1. Install SDL2 with brew
-
-`brew install sdl2`
+1. Install SDL2 with brew `brew install sdl2`
 
 2. Clone this repository
 `git clone https://github.com/MHDtA-dev/LogiGates.git`
@@ -54,14 +46,10 @@ OR
   cd build
 ```
 
-5. Run CMake
-`cmake ..`
+5. Run CMake `cmake ..`
 
 6. Build using make or ninja (Depends on your generator)
-`make`
-
-OR
-`ninja`
+`make` OR `ninja`
 
 ### Windows
 
