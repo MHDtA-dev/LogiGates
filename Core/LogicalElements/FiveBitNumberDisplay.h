@@ -18,6 +18,7 @@
 #define LOGIGATES_FIVEBITNUMBERDISPLAY_H
 
 #include <iostream>
+#include <cmath>
 
 #include "Base.h"
 

@@ -18,6 +18,7 @@
 #define LOGIGATES_FIVEBITNUMBERENCODER_H
 
 #include <iostream>
+#include <cmath>
 #include <numeric>
 
 #include "Base.h"

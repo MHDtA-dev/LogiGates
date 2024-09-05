@@ -16,7 +16,7 @@
 
 #include "Core/App.h"
 
-int main() {
+int main(int argc, char* argv[]) {
 
     LogiGates::Core::App app = LogiGates::Core::App();
     app.run();
