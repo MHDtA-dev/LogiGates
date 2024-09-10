@@ -28,7 +28,7 @@ namespace LogiGates::Core::LogicalElements {
             Switch(UI::Workspace* workspace);
 
             void render() override;
-            void perform() override;
+            void perform(std::set<int> performedIDs = {}) override;
     };
 
 }

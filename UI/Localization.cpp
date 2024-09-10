@@ -44,7 +44,10 @@ namespace LogiGates::UI {
                 {"b",              "Б"},
                 {"theme",          "Тема"},
                 {"language",       "Язык"},
-                {"about",          "О программе"}
+                {"about",          "О программе"},
+                {"clear",          "Очистить"},
+                {"recursionWarnTitle",  "Обнаружена рекурсия"},
+                {"recursionWarn",  "Только что выполненное вами соединение создаёт рекурсию в цепи. Вероятнее\nвсего, данная цепь не будет работать корректно до момента\nустранения рекурсии."}
         };
 
         localization["en"] = {
@@ -72,7 +75,10 @@ namespace LogiGates::UI {
                 {"b",              "B"},
                 {"theme",          "Theme"},
                 {"language",       "Language"},
-                {"about",          "About"}
+                {"about",          "About"},
+                {"clear",          "Clear"},
+                {"recursionWarnTitle",  "Recursion is detected"},
+                {"recursionWarn",  "The connection you just made creates a recursion in the chain.\nMost likely, this chain will not work correctly until the\nrecursion is eliminated."}
         };
     }
 

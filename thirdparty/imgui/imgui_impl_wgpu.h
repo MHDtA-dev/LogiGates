@@ -20,6 +20,8 @@
 #include "imgui.h"          // IMGUI_IMPL_API
 #ifndef IMGUI_DISABLE
 
+#include <iostream>
+#include <algorithm>
 #include <webgpu/webgpu.h>
 
 // Initialization data, for ImGui_ImplWGPU_Init()
@@ -44,6 +46,7 @@ IMGUI_IMPL_API bool ImGui_ImplWGPU_Init(ImGui_ImplWGPU_InitInfo* init_info);
 IMGUI_IMPL_API void ImGui_ImplWGPU_Shutdown();
 IMGUI_IMPL_API void ImGui_ImplWGPU_NewFrame();
 IMGUI_IMPL_API void ImGui_ImplWGPU_RenderDrawData(ImDrawData* draw_data, WGPURenderPassEncoder pass_encoder);
+IMGUI_IMPL_API void ImGui_ImplWGPU_PushRealWindowSize(int width, int height);
 
 // Use if you want to reset your rendering device without losing Dear ImGui state.
 IMGUI_IMPL_API void ImGui_ImplWGPU_InvalidateDeviceObjects();

@@ -29,7 +29,7 @@ namespace LogiGates::Core::LogicalElements {
             Splitter(UI::Workspace* workspace);
 
             void render() override;
-            void perform() override;
+            void perform(std::set<int> performedIDs = {}) override;
 
             SaveInfo getSaveInfo() override;
             void restoreFromSaveInfo(SaveInfo info) override;

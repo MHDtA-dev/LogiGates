@@ -75,9 +75,9 @@ namespace LogiGates::Core {
         this->state = state;
     }
 
-    void Pin::performNext() {
+    void Pin::performNext(std::set<int> performedIDs) {
         if (this->type == PinType::OUTPUT and this->nextElement != nullptr) {
-            this->nextElement->perform();
+            this->nextElement->perform(performedIDs);
         }
     }
 

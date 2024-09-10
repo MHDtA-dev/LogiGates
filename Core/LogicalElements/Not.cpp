@@ -38,11 +38,13 @@ namespace LogiGates::Core::LogicalElements {
         ImNodes::EndNode();
     }
 
-    void Not::perform() {
+    void Not::perform(std::set<int> performedIDs) {
+        if (this->checkRecursion(performedIDs)) return;
         if (pins[0]->getConnectedWith() != -1)
             pins[0]->setState(Pin::globalPinMap[pins[0]->getConnectedWith()]->getState());
         pins[1]->setState(!pins[0]->getState());
-        pins[1]->performNext();
+        performedIDs.emplace(this->id);
+        pins[1]->performNext(performedIDs);
     }
 
 }

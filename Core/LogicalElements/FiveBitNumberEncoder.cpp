@@ -64,15 +64,16 @@ namespace LogiGates::Core::LogicalElements {
         ImNodes::EndNode();
     }
 
-    void FiveBitNumberEncoder::perform() {
+    void FiveBitNumberEncoder::perform(std::set<int> performedIDs) {
+        if (this->checkRecursion(performedIDs)) return;
         Pin *outputs[5] = {pins[4], pins[3], pins[2], pins[1], pins[0]};
 
         std::string binary = decToBaseReversed(number, 2);
-
+        performedIDs.emplace(this->id);
 
         for (int i = 0; i < 5; i++) {
             outputs[i]->setState(i < binary.size() and binary[i] == '1');
-            outputs[i]->performNext();
+            outputs[i]->performNext(performedIDs);
         }
     }
 

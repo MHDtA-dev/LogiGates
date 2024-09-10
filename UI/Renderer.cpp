@@ -32,11 +32,6 @@ namespace LogiGates::UI {
 
         windowWidth = window->getWidth();
         windowHeight = window->getHeight();
-
-#ifdef __APPLE__
-        lastWindowWidth = windowWidth;
-        lastWindowHeight = windowHeight;
-#endif
     }
 
     Renderer::~Renderer() {
@@ -115,27 +110,28 @@ namespace LogiGates::UI {
     }
 
     bool Renderer::begin() {
-#ifdef __APPLE__
+
         windowWidth = window->getWidth();
         windowHeight = window->getHeight();
-#endif
 
         wgpu::SurfaceTexture surfaceTexture;
         surface.getCurrentTexture(&surfaceTexture);
+        targetTexture = surfaceTexture.texture;
+        targetView = targetTexture.createView();
 
-#ifdef __APPLE__
-        if (lastWindowWidth != windowWidth or lastWindowHeight != windowHeight) {
-            wgpuTextureRelease(surfaceTexture.texture);
+        if (resizedX != -1 and resizedY != -1) {
+            targetTexture.release();
             reconfigureSurface(window->getWidth(), window->getHeight());
 
-            lastWindowWidth = windowWidth;
-            lastWindowHeight = windowHeight;
-
+            resizedX = -1;
+            resizedY = -1;
             return false;
         }
-#else
+
 
         if (surfaceTexture.status == wgpu::SurfaceGetCurrentTextureStatus::Outdated) {
+            targetTexture.release();
+
             reconfigureSurface(window->getWidth(), window->getHeight());
 
             windowWidth = window->getWidth();
@@ -143,20 +139,9 @@ namespace LogiGates::UI {
 
         }
 
-#endif
-
         commandEncoder = device.createCommandEncoder();
 
-        wgpu::TextureViewDescriptor viewDescriptor;
-        viewDescriptor.nextInChain = nullptr;
-        viewDescriptor.format = wgpuTextureGetFormat(surfaceTexture.texture);
-        viewDescriptor.dimension = wgpu::TextureViewDimension::_2D;
-        viewDescriptor.baseMipLevel = 0;
-        viewDescriptor.mipLevelCount = 1;
-        viewDescriptor.baseArrayLayer = 0;
-        viewDescriptor.arrayLayerCount = 1;
-        viewDescriptor.aspect = wgpu::TextureAspect::All;
-        targetView = wgpuTextureCreateView(surfaceTexture.texture, &viewDescriptor);
+
 
         wgpu::RenderPassDescriptor renderPassDesc = {};
         renderPassDesc.nextInChain = nullptr;
@@ -211,6 +196,7 @@ namespace LogiGates::UI {
         renderPass = commandEncoder.beginRenderPass(renderPassDesc);
 
         ImGui_ImplWGPU_NewFrame();
+        ImGui_ImplWGPU_PushRealWindowSize(windowWidth, windowHeight);
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
@@ -222,6 +208,8 @@ namespace LogiGates::UI {
         ImGui::Render();
         ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), renderPass);
 
+        renderPass.setViewport(0, 0, windowWidth, windowHeight, 0, 1);
+
         renderPass.end();
         renderPass.release();
 
@@ -231,15 +219,12 @@ namespace LogiGates::UI {
         commandEncoder.release();
 
         targetView.release();
-        depthTexture.release();
         depthTextureView.release();
 
         surface.present();
+        depthTexture.release();
+        targetTexture.release();
 
-#ifdef __APPLE__
-        lastWindowWidth = windowWidth;
-        lastWindowHeight = windowHeight;
-#endif
     }
 
     void Renderer::initImGui() {
@@ -451,6 +436,11 @@ namespace LogiGates::UI {
             mipLevelSize.width /= 2;
             mipLevelSize.height /= 2;
         }
+    }
+
+    void Renderer::windowResized(int width, int height) {
+        resizedX = width;
+        resizedY = height;
     }
 
 

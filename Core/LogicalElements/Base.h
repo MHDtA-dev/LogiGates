@@ -18,6 +18,7 @@
 #define LOGIGATES_BASE_H
 
 #include <iostream>
+#include <set>
 #include <functional>
 
 #include "../Pin.h"
@@ -47,7 +48,7 @@ namespace LogiGates::Core::LogicalElements {
             Base(UI::Workspace* workspace);
             ~Base();
 
-            virtual void perform();
+            virtual void perform(std::set<int> performedIDs = {});
             virtual void render();
 
             int getID();
@@ -65,6 +66,8 @@ namespace LogiGates::Core::LogicalElements {
             inline static int nodeIDCounter = 1;
 
             std::string typeName;
+
+            bool checkRecursion(std::set<int> performedIDs);
 
     };
 

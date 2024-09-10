@@ -24,7 +24,7 @@ namespace LogiGates::Core::LogicalElements {
         nodeIDCounter++;
     }
 
-    void Base::perform() {
+    void Base::perform(std::set<int> performedIDs) {
 
     }
 
@@ -85,6 +85,15 @@ namespace LogiGates::Core::LogicalElements {
 
     std::string Base::getTypeName() {
         return this->typeName;
+    }
+
+    bool Base::checkRecursion(std::set<int> performedIDs) {
+        if (performedIDs.find(this->id) != performedIDs.end()) {
+            this->workspace->enableRecursionWarning();
+            return true;
+        }
+
+        return false;
     }
 
 }

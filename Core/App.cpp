@@ -34,8 +34,14 @@ namespace LogiGates::Core {
 
     void App::run() {
         while (!this->window->shouldClose()) {
-            window->pollEvents([] (SDL_Event e) {
+            window->pollEvents([=] (SDL_Event e) {
                 ImGui_ImplSDL2_ProcessEvent(&e);
+
+                if (e.type == SDL_WINDOWEVENT) {
+                    if (e.window.event == SDL_WINDOWEVENT_RESIZED or e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                        renderer->windowResized(e.window.data1, e.window.data2);
+                    }
+                }
             });
 
             if (renderer->begin()) {

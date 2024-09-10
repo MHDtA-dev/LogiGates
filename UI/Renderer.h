@@ -43,45 +43,45 @@ namespace LogiGates::UI {
     };
 
     class Renderer {
-        public:
-            Renderer(Window* window);
-            ~Renderer();
+    public:
+        Renderer(Window* window);
+        ~Renderer();
 
-            void reconfigureSurface(int width, int height);
-            bool begin();
-            void end();
+        void reconfigureSurface(int width, int height);
+        void windowResized(int width, int height);
+        bool begin();
+        void end();
 
-            Texture* loadTexture(std::string path);
+        Texture* loadTexture(std::string path);
 
-        private:
-            Window* window;
+    private:
+        Window* window;
 
-            wgpu::Instance instance;
-            wgpu::Adapter adapter;
-            wgpu::Device device;
-            wgpu::Queue queue;
-            wgpu::CommandEncoder commandEncoder;
-            wgpu::Surface surface;
+        wgpu::Instance instance;
+        wgpu::Adapter adapter;
+        wgpu::Device device;
+        wgpu::Queue queue;
+        wgpu::CommandEncoder commandEncoder;
+        wgpu::Surface surface;
 
-            wgpu::TextureFormat depthFormat = wgpu::TextureFormat::Depth24Plus;
+        wgpu::TextureFormat depthFormat = wgpu::TextureFormat::Depth24Plus;
 
-            wgpu::TextureView targetView;
-            wgpu::RenderPassEncoder renderPass;
-            wgpu::Texture depthTexture;
-            wgpu::TextureView depthTextureView;
+        wgpu::Texture targetTexture;
+        wgpu::TextureView targetView;
+        wgpu::RenderPassEncoder renderPass;
+        wgpu::Texture depthTexture;
+        wgpu::TextureView depthTextureView;
 
-            void createInstance();
-            void requestAdapter();
-            void requestDevice();
-            void requestQueue();
-            void createSurface();
-            void initImGui();
+        void createInstance();
+        void requestAdapter();
+        void requestDevice();
+        void requestQueue();
+        void createSurface();
+        void initImGui();
 
-            int windowWidth, windowHeight;
+        int windowWidth, windowHeight;
+        int resizedX = -1, resizedY = -1;
 
-#ifdef __APPLE__
-            int lastWindowWidth, lastWindowHeight;
-#endif
 
         void writeMipMaps(wgpu::Texture texture, wgpu::Extent3D textureSize, uint32_t mipLevelCount, const unsigned char* pixelData);
 

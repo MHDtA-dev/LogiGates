@@ -14,6 +14,12 @@
     limitations under the License.
 */
 
+#ifdef __APPLE__
+#define LOGIGATES_FILE_EXTENSION ".logigates"
+#else
+#define LOGIGATES_FILE_EXTENSION ""
+#endif
+
 #ifndef LOGIGATES_DOCKSPACE_H
 #define LOGIGATES_DOCKSPACE_H
 

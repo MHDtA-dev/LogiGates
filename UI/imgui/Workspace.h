@@ -45,11 +45,15 @@ namespace LogiGates::UI {
             void removeConnection(int start, int end);
             void addElement(Core::LogicalElements::Base* element);
 
-            void saveWorkspace(std::string filename);
-            void loadWorkspace(std::string filename);
+            void enableRecursionWarning();
+
+            void save(std::string filename);
+            void load(std::string filename);
 
             bool deleteAction = false;
             void contextMenuDelete();
+
+            void clear();
 
             std::vector<std::pair<int, int>> connectionQueue;
             std::unordered_map<int, Core::Pin*> globalPinMapOnLoad;
@@ -59,6 +63,10 @@ namespace LogiGates::UI {
             std::vector<std::pair<int, int>> connections;
 
             std::unordered_map<std::string, std::function<void()>> addElementFuncs;
+
+            bool deleteKeyPressed = false;
+
+            bool recursionWarning = false;
 
     };
 

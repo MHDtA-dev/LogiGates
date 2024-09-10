@@ -84,17 +84,21 @@ namespace LogiGates::UI {
                     const char* selection = tinyfd_saveFileDialog("Save file", nullptr, 1, filter, nullptr);
 
                     if (selection != nullptr) {
-                        workspace->saveWorkspace(std::string(selection) + ".logigates");
+                        workspace->save(std::string(selection) + LOGIGATES_FILE_EXTENSION);
                     }
                 }
 
                 if (ImGui::MenuItem(Localization::localization[Localization::currentLocalization]["load"].c_str())) {
                     const char* filter[1] = {"*.logigates"};
-                    const char* selection = tinyfd_openFileDialog("Save file", nullptr, 1, filter, nullptr, false);
+                    const char* selection = tinyfd_openFileDialog("Open file", nullptr, 1, filter, nullptr, false);
 
                     if (selection != nullptr) {
-                        workspace->loadWorkspace(std::string(selection));
+                        workspace->load(std::string(selection));
                     }
+                }
+
+                if (ImGui::MenuItem(Localization::localization[Localization::currentLocalization]["clear"].c_str())) {
+                    workspace->clear();
                 }
 
                 ImGui::Separator();

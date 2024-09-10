@@ -23,9 +23,10 @@ namespace LogiGates::UI {
             std::cout << "Can not init SDL2: " << SDL_GetError() << std::endl;
         }
 
-        handle = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height,
+        handle = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height,
                                   SDL_WINDOW_SHOWN);
         SDL_SetWindowResizable(handle, SDL_TRUE);
+        SDL_SetWindowFullscreen(handle, 0);
     }
 
     Window::Window(std::string name) {
@@ -36,7 +37,7 @@ namespace LogiGates::UI {
         SDL_DisplayMode dm;
         SDL_GetCurrentDisplayMode(0, &dm);
 
-        handle = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, dm.w, dm.h,
+        handle = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, dm.w - 250, dm.h - 250,
                                   SDL_WINDOW_SHOWN);
         SDL_SetWindowResizable(handle, SDL_TRUE);
     }

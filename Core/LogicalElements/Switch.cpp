@@ -33,7 +33,7 @@ namespace LogiGates::Core::LogicalElements {
                                                                   : UI::Images::icons["switch_off"]->texture), {70, 70},
                                {0, 0}, {1, 1})) {
             pins[0]->setState(!pins[0]->getState());
-            pins[0]->performNext();
+            this->perform();
         }
 
         for (Pin *p: pins) {
@@ -43,8 +43,10 @@ namespace LogiGates::Core::LogicalElements {
         ImNodes::EndNode();
     }
 
-    void Switch::perform() {
-        pins[0]->performNext();
+    void Switch::perform(std::set<int> performedIDs) {
+        if (this->checkRecursion(performedIDs)) return;
+        performedIDs.emplace(this->id);
+        pins[0]->performNext(performedIDs);
     }
 
 }

@@ -18,6 +18,7 @@
 #define LOGIGATES_PIN_H
 
 #include <iostream>
+#include <set>
 #include <functional>
 
 #include "../thirdparty/imgui/imgui.h"
@@ -54,7 +55,7 @@ namespace LogiGates::Core {
             bool getState();
             void setState(bool state);
 
-            void performNext(); // Only for output
+            void performNext(std::set<int> performedIDs = {}); // Only for output
 
             inline static std::unordered_map<int, Pin*> globalPinMap;
 

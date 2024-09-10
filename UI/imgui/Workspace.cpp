@@ -66,6 +66,18 @@ namespace LogiGates::UI {
     }
 
     void LogiGates::UI::Workspace::render() {
+        if (this->recursionWarning) {
+            ImGui::PushFont(Fonts::openSans20);
+            ImGui::Begin(Localization::localization[Localization::currentLocalization]["recursionWarnTitle"].c_str(), &recursionWarning, ImGuiWindowFlags_NoDocking);
+            ImGui::PopFont();
+
+            ImGui::PushFont(Fonts::openSans20);
+            ImGui::Text("%s", Localization::localization[Localization::currentLocalization]["recursionWarn"].c_str());
+            ImGui::PopFont();
+
+            ImGui::End();
+        }
+
         ImGui::PushFont(Fonts::openSans20);
         ImGui::Begin(Localization::localization[Localization::currentLocalization]["workspace"].c_str());
         ImGui::PopFont();
@@ -93,6 +105,13 @@ namespace LogiGates::UI {
         }
 
         ImGui::PopFont();
+
+        if ((ImGui::IsKeyDown(ImGuiKey_Backspace) or ImGui::IsKeyDown(ImGuiKey_Delete)) and !deleteKeyPressed) {
+            deleteAction = true;
+            deleteKeyPressed = true;
+        } else {
+            deleteKeyPressed = false;
+        }
 
         ImNodes::EndNodeEditor();
 
@@ -201,7 +220,7 @@ namespace LogiGates::UI {
         }
     }
 
-    void LogiGates::UI::Workspace::saveWorkspace(std::string filename) {
+    void LogiGates::UI::Workspace::save(std::string filename) {
         std::vector<Core::LogicalElements::SaveInfo> saves;
 
         for (Core::LogicalElements::Base* element: elements) {
@@ -211,7 +230,9 @@ namespace LogiGates::UI {
         Lunada::SerializeVector<Core::LogicalElements::SaveInfo>(saves, filename);
     }
 
-    void LogiGates::UI::Workspace::loadWorkspace(std::string filename) {
+    void LogiGates::UI::Workspace::load(std::string filename) {
+        this->clear();
+
         std::vector<Core::LogicalElements::SaveInfo> saves;
 
         Lunada::DeserializeVector<Core::LogicalElements::SaveInfo>(saves, filename);
@@ -230,6 +251,23 @@ namespace LogiGates::UI {
         connectionQueue.clear();
         globalPinMapOnLoad.clear();
 
+    }
+
+    void Workspace::clear() {
+        for (auto& connection : connections) {
+            disconnect(connection.first);
+        }
+
+        for (Core::LogicalElements::Base* element : elements) {
+            delete element;
+        }
+
+        elements.clear();
+
+    }
+
+    void Workspace::enableRecursionWarning() {
+        this->recursionWarning = !deleteAction;
     }
 
 }

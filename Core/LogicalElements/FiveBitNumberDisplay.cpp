@@ -49,7 +49,8 @@ namespace LogiGates::Core::LogicalElements {
         ImNodes::EndNode();
     }
 
-    void FiveBitNumberDisplay::perform() {
+    void FiveBitNumberDisplay::perform(std::set<int> performedIDs) {
+        if (this->checkRecursion(performedIDs)) return;
         Pin* inputs[5] = {pins[0], pins[1], pins[2], pins[3], pins[4]};
 
         number = 0;
@@ -59,9 +60,11 @@ namespace LogiGates::Core::LogicalElements {
             number += inputs[4 - i]->getState() * pow(2, i);
         }
 
+        performedIDs.emplace(this->id);
+
         for (int i = 5; i < pins.size(); i++) {
             pins[i]->setState(pins[i - 5]->getState());
-            pins[i]->performNext();
+            pins[i]->performNext(performedIDs);
         }
     }
 

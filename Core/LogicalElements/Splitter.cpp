@@ -60,13 +60,16 @@ namespace LogiGates::Core::LogicalElements {
         ImNodes::EndNode();
     }
 
-    void Splitter::perform() {
+    void Splitter::perform(std::set<int> performedIDs) {
+        if (this->checkRecursion(performedIDs)) return;
         if (pins[0]->getConnectedWith() != -1)
             pins[0]->setState(Pin::globalPinMap[pins[0]->getConnectedWith()]->getState());
 
+        performedIDs.emplace(this->id);
+
         for (int i = 1; i < pins.size(); i++) {
             pins[i]->setState(pins[0]->getState());
-            pins[i]->performNext();
+            pins[i]->performNext(performedIDs);
         }
     }
 

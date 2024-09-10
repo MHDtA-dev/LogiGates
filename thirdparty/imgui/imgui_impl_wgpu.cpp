@@ -89,6 +89,9 @@ struct ImGui_ImplWGPU_Data
     FrameResources*         pFrameResources = nullptr;
     unsigned int            numFramesInFlight = 0;
     unsigned int            frameIndex = UINT_MAX;
+
+    int realWindowWidth;
+    int realWindowHeight;
 };
 
 // Backend data stored in io.BackendRendererUserData to allow support for multiple Dear ImGui contexts
@@ -324,7 +327,8 @@ static void ImGui_ImplWGPU_SetupRenderState(ImDrawData* draw_data, WGPURenderPas
     }
 
     // Setup viewport
-    wgpuRenderPassEncoderSetViewport(ctx, 0, 0, draw_data->FramebufferScale.x * draw_data->DisplaySize.x, draw_data->FramebufferScale.y * draw_data->DisplaySize.y, 0, 1);
+    /// Fixed: Crashes when fullscreen
+    wgpuRenderPassEncoderSetViewport(ctx, 0, 0, std::min(draw_data->FramebufferScale.x * draw_data->DisplaySize.x, (float) bd->realWindowWidth), std::min(draw_data->FramebufferScale.y * draw_data->DisplaySize.y, (float) bd->realWindowHeight), 0, 1);
 
     // Bind shader and vertex buffers
     wgpuRenderPassEncoderSetVertexBuffer(ctx, 0, fr->VertexBuffer, 0, fr->VertexBufferSize * sizeof(ImDrawVert));
@@ -467,12 +471,13 @@ void ImGui_ImplWGPU_RenderDrawData(ImDrawData* draw_data, WGPURenderPassEncoder 
                 // Clamp to viewport as wgpuRenderPassEncoderSetScissorRect() won't accept values that are off bounds
                 if (clip_min.x < 0.0f) { clip_min.x = 0.0f; }
                 if (clip_min.y < 0.0f) { clip_min.y = 0.0f; }
-                if (clip_max.x > fb_width) { clip_max.x = (float)fb_width; }
-                if (clip_max.y > fb_height) { clip_max.y = (float)fb_height; }
+                if (clip_max.x > bd->realWindowWidth) { clip_max.x = (float) bd->realWindowWidth; }
+                if (clip_max.y > bd->realWindowHeight) { clip_max.y = (float) bd->realWindowHeight; }
                 if (clip_max.x <= clip_min.x || clip_max.y <= clip_min.y)
                     continue;
 
                 // Apply scissor/clipping rectangle, Draw
+                /// Fixed: Crashes when fullscreen
                 wgpuRenderPassEncoderSetScissorRect(pass_encoder, (uint32_t)clip_min.x, (uint32_t)clip_min.y, (uint32_t)(clip_max.x - clip_min.x), (uint32_t)(clip_max.y - clip_min.y));
                 wgpuRenderPassEncoderDrawIndexed(pass_encoder, pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
             }
@@ -793,6 +798,12 @@ void ImGui_ImplWGPU_NewFrame()
     ImGui_ImplWGPU_Data* bd = ImGui_ImplWGPU_GetBackendData();
     if (!bd->pipelineState)
         ImGui_ImplWGPU_CreateDeviceObjects();
+}
+
+void ImGui_ImplWGPU_PushRealWindowSize(int width, int height) {
+    ImGui_ImplWGPU_Data* bd = ImGui_ImplWGPU_GetBackendData();
+    bd->realWindowWidth = width;
+    bd->realWindowHeight = height;
 }
 
 //-----------------------------------------------------------------------------

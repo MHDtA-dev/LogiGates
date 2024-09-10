@@ -7,6 +7,7 @@ include(FetchContent)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Resources/fonts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Resources/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Resources/imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 FetchContent_Declare(
         webgpu
