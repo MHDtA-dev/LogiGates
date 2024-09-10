@@ -53,4 +53,4 @@ LogiGates is a simple logical chain simulator. It includes all the basic logic e
 
 ### Windows
 
-Bruh :)
+~~Bruh :)~~ You can download compiled binary from [Releases](https://github.com/MHDtA-dev/LogiGates/releases) or try to build it yourself with MinGW.
