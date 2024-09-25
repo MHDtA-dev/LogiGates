@@ -18,7 +18,7 @@
 
 namespace LogiGates::UI {
 
-    Workspace::Workspace() {
+    Workspace::Workspace(std::string name) : name(name) {
         addElementFuncs["and"] = [=]() {
             addElement(new Core::LogicalElements::And(this));
         };
@@ -63,6 +63,12 @@ namespace LogiGates::UI {
             addElement(new Core::LogicalElements::FiveBitNumberDisplay(this));
         };
 
+        addElementFuncs["multiplexer"] = [=]() {
+            addElement(new Core::LogicalElements::Multiplexer(this));
+        };
+
+        imnodesCtx = ImNodes::EditorContextCreate();
+
     }
 
     void LogiGates::UI::Workspace::render() {
@@ -78,68 +84,111 @@ namespace LogiGates::UI {
             ImGui::End();
         }
 
-        ImGui::PushFont(Fonts::openSans20);
-        ImGui::Begin(Localization::localization[Localization::currentLocalization]["workspace"].c_str());
-        ImGui::PopFont();
+        if (showWindow) {
+
+            ImGui::PushFont(Fonts::openSans20);
+            bool beginResult = ImGui::Begin(this->name.c_str(), &showWindow);
+            ImGui::PopFont();
 
 
-        ImNodes::BeginNodeEditor();
+            ImNodes::EditorContextSet(imnodesCtx);
+            ImNodes::BeginNodeEditor();
 
-        for (Core::LogicalElements::Base* element: elements) {
-            element->render();
-        }
+            bool editorFocused = ImNodes::IsEditorHovered() and ImGui::IsMouseClicked(ImGuiMouseButton_Left);
 
-        for (int i = 0; i < connections.size(); i++) {
-            ImNodes::Link(i, connections[i].first, connections[i].second);
-        }
-
-        ImGui::PushFont(Fonts::openSans24);
-        if (ImGui::BeginPopupContextWindow()) {
-
-
-            if (ImGui::MenuItem(Localization::localization[Localization::currentLocalization]["delete"].c_str())) {
-                deleteAction = true;
+            for (Core::LogicalElements::Base *element: elements) {
+                element->render();
             }
 
-            ImGui::EndPopup();
-        }
-
-        ImGui::PopFont();
-
-        if ((ImGui::IsKeyDown(ImGuiKey_Backspace) or ImGui::IsKeyDown(ImGuiKey_Delete)) and !deleteKeyPressed) {
-            deleteAction = true;
-            deleteKeyPressed = true;
-        } else {
-            deleteKeyPressed = false;
-        }
-
-        ImNodes::EndNodeEditor();
-
-        contextMenuDelete();
-
-        if (ImGui::BeginDragDropTarget()) {
-            auto payload = ImGui::AcceptDragDropPayload("ELEMENT");
-            if (payload != nullptr) {
-                addElementFuncs[std::string((const char *) payload->Data)]();
-                ImNodes::SetNodeScreenSpacePos(elements[elements.size() - 1]->getID(), ImGui::GetMousePos());
-                elements[elements.size() - 1]->perform();
+            for (int i = 0; i < connections.size(); i++) {
+                ImNodes::Link(i, connections[i].first, connections[i].second);
             }
 
-            ImGui::EndDragDropTarget();
+            ImGui::PushFont(Fonts::openSans24);
+            if (ImGui::BeginPopupContextWindow()) {
+
+                if (ImGui::MenuItem(
+                        Localization::localization[Localization::currentLocalization]["delete"].c_str())) {
+                    deleteAction = true;
+                }
+
+                ImGui::EndPopup();
+            }
+
+            ImGui::PopFont();
+
+            if (*activeWorkspace == this) {
+                ImVec2 panning = ImNodes::EditorContextGetPanning();
+
+                if (ImGui::IsKeyDown(ImGuiKey_LeftArrow)) {
+                    panning.x += (float) editorMoveSpeed;
+                }
+
+                if (ImGui::IsKeyDown(ImGuiKey_RightArrow)) {
+                    panning.x -= (float) editorMoveSpeed;
+                }
+
+                if (ImGui::IsKeyDown(ImGuiKey_UpArrow)) {
+                    panning.y += (float) editorMoveSpeed;
+                }
+
+                if (ImGui::IsKeyDown(ImGuiKey_DownArrow)) {
+                    panning.y -= (float) editorMoveSpeed;
+                }
+
+                ImNodes::EditorContextResetPanning(panning);
+
+                if ((ImGui::IsKeyPressed(ImGuiKey_Backspace) or ImGui::IsKeyPressed(ImGuiKey_Delete)) and !deleteKeyPressed) {
+                    deleteAction = true;
+                    deleteKeyPressed = true;
+                }
+
+                if ((ImGui::IsKeyReleased(ImGuiKey_Backspace) or ImGui::IsKeyReleased(ImGuiKey_Delete)) and deleteKeyPressed) {
+                    deleteKeyPressed = false;
+                }
+
+            }
+
+            ImNodes::EndNodeEditor();
+
+            contextMenuDelete();
+
+            if (ImGui::BeginDragDropTarget()) {
+                auto payload = ImGui::AcceptDragDropPayload("ELEMENT");
+                if (payload != nullptr) {
+                    editorFocused = true;
+                    addElementFuncs[std::string((const char *) payload->Data)]();
+                    ImNodes::SetNodeScreenSpacePos(elements[elements.size() - 1]->getID(), ImGui::GetMousePos());
+                    elements[elements.size() - 1]->perform();
+                }
+
+                ImGui::EndDragDropTarget();
+            }
+
+            if (beginResult and (editorFocused or ImGui::IsWindowFocused())) {
+                *this->activeWorkspace = this;
+            }
+
+
+            int startID, endID;
+            if (ImNodes::IsLinkCreated(&startID, &endID)) {
+                connect(startID, endID);
+            }
+
+            int linkDestroyed;
+            if (ImNodes::IsLinkDestroyed(&linkDestroyed)) {
+                std::cout << linkDestroyed << std::endl;
+            }
+
+
+            ImGui::End();
         }
 
+        if (!firstRender) {
+            ImGui::DockBuilderDockWindow(this->name.c_str(), dockID);
 
-        int startID, endID;
-        if (ImNodes::IsLinkCreated(&startID, &endID)) {
-            connect(startID, endID);
+            firstRender = true;
         }
-
-        int linkDestroyed;
-        if (ImNodes::IsLinkDestroyed(&linkDestroyed)) {
-            std::cout << linkDestroyed << std::endl;
-        }
-
-        ImGui::End();
     }
 
     void LogiGates::UI::Workspace::addElement(Core::LogicalElements::Base* element) {
@@ -147,28 +196,29 @@ namespace LogiGates::UI {
     }
 
     LogiGates::UI::Workspace::~Workspace() {
+        ImNodes::EditorContextFree(this->imnodesCtx);
         for (Core::LogicalElements::Base* element: elements) {
             delete element;
         }
     }
 
     void LogiGates::UI::Workspace::connect(int start, int end) {
-        if (Core::Pin::globalPinMap[start]->getConnectedWith() != -1) {
+        if (globalPinMap[start]->getConnectedWith() != -1) {
             disconnect(start);
         }
 
-        if (Core::Pin::globalPinMap[end]->getConnectedWith() != -1) {
+        if (globalPinMap[end]->getConnectedWith() != -1) {
             disconnect(end);
         }
 
-        Core::Pin::globalPinMap[start]->connect(end);
+        globalPinMap[start]->connect(end);
         connections.push_back({start, end});
     }
 
     void LogiGates::UI::Workspace::disconnect(int pin) {
         for (auto i = connections.begin(); i != connections.end(); i++) {
             if (i->first == pin or i->second == pin) {
-                Core::Pin::globalPinMap[pin]->disconnect();
+                globalPinMap[pin]->disconnect();
                 connections.erase(i);
                 break;
             }
@@ -209,9 +259,16 @@ namespace LogiGates::UI {
                 int *selectedConnections = (int*) malloc(selectedConnectionsCount * sizeof(int));
                 ImNodes::GetSelectedLinks(selectedConnections);
 
+                std::vector<int> linksToDisconnect;
+
                 for (int i = 0; i < selectedConnectionsCount; i++) {
-                    disconnect(connections[selectedConnections[i]].first);
+                    linksToDisconnect.push_back(connections[selectedConnections[i]].first);
                 }
+
+                for (int pin : linksToDisconnect) {
+                    disconnect(pin);
+                }
+
 
                 free(selectedConnections);
             }
@@ -239,10 +296,10 @@ namespace LogiGates::UI {
 
         for (Core::LogicalElements::SaveInfo saveInfo: saves) {
             addElementFuncs[std::string(saveInfo.elementType)]();
-            elements[elements.size() - 1]->restoreFromSaveInfo(saveInfo);
+            elements[elements.size() - 1]->restoreFromSaveInfo(saveInfo, this->imnodesCtx);
         }
 
-        Core::Pin::globalPinMap = globalPinMapOnLoad;
+        globalPinMap = globalPinMapOnLoad;
 
         for (auto connection: connectionQueue) {
             connect(connection.first, connection.second);
@@ -269,5 +326,14 @@ namespace LogiGates::UI {
     void Workspace::enableRecursionWarning() {
         this->recursionWarning = !deleteAction;
     }
+
+    std::string Workspace::getName() {
+        return this->name;
+    }
+
+    void Workspace::setName(std::string name) {
+        this->name = name;
+    }
+
 
 }

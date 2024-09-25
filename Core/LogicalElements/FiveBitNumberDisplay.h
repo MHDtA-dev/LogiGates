@@ -35,7 +35,7 @@ namespace LogiGates::Core::LogicalElements {
             void perform(std::set<int> performedIDs = {}) override;
 
             SaveInfo getSaveInfo() override;
-            void restoreFromSaveInfo(SaveInfo info) override;
+            void restoreFromSaveInfo(SaveInfo info, ImNodesEditorContext* editorCtx) override;
 
         private:
             int number;

@@ -14,27 +14,23 @@
     limitations under the License.
 */
 
-#ifndef LOGIGATES_SPLITTER_H
-#define LOGIGATES_SPLITTER_H
+#ifndef LOGIGATES_WELCOME_H
+#define LOGIGATES_WELCOME_H
 
-#include <iostream>
-#include <algorithm>
-#include "Base.h"
-#include "../../UI/Images.h"
+#include "Drawable.h"
+#include "../Renderer.h"
 
-namespace LogiGates::Core::LogicalElements {
+namespace LogiGates::UI {
 
-    class Splitter : public Base {
+    class Welcome : public Drawable {
         public:
-            Splitter(UI::Workspace* workspace);
-
             void render() override;
-            void perform(std::set<int> performedIDs = {}) override;
 
-            SaveInfo getSaveInfo() override;
-            void restoreFromSaveInfo(SaveInfo info, ImNodesEditorContext* editorCtx) override;
+            bool visible = false;
+
     };
 
 }
 
-#endif //LOGIGATES_SPLITTER_H
+
+#endif //LOGIGATES_WELCOME_H

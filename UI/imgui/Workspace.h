@@ -19,7 +19,9 @@
 
 #include <iostream>
 #include <vector>
+#include <set>
 #include <functional>
+#include <cstring>
 
 #include "Drawable.h"
 #include "../Renderer.h"
@@ -31,12 +33,15 @@
 
 #include "../../thirdparty/imnodes/imnodes.h"
 #include "../../thirdparty/lunada/lunada.h"
+#include "../../thirdparty/imgui/imgui_internal.h"
 
 namespace LogiGates::UI {
 
+    class Dockspace;
+
     class Workspace : public Drawable {
         public:
-            Workspace();
+            Workspace(std::string name);
             ~Workspace();
 
             void render() override;
@@ -53,10 +58,24 @@ namespace LogiGates::UI {
             bool deleteAction = false;
             void contextMenuDelete();
 
+            std::string getName();
+            void setName(std::string name);
+
             void clear();
+
+            bool showWindow = true;
 
             std::vector<std::pair<int, int>> connectionQueue;
             std::unordered_map<int, Core::Pin*> globalPinMapOnLoad;
+
+            Workspace** activeWorkspace;
+
+            int pinIdCounter = 1;
+            int nodeIDCounter = 1;
+            std::unordered_map<int, Core::Pin*> globalPinMap;
+
+            inline static ImGuiID dockID;
+            inline static int editorMoveSpeed = 5;
 
         private:
             std::vector<Core::LogicalElements::Base*> elements;
@@ -64,9 +83,16 @@ namespace LogiGates::UI {
 
             std::unordered_map<std::string, std::function<void()>> addElementFuncs;
 
-            bool deleteKeyPressed = false;
+            bool deleteKeyPressed = 0;
 
             bool recursionWarning = false;
+
+            bool firstRender = false;
+
+            std::string name = "";
+
+            ImNodesEditorContext* imnodesCtx;
+
 
     };
 

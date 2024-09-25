@@ -14,27 +14,33 @@
     limitations under the License.
 */
 
-#ifndef LOGIGATES_SPLITTER_H
-#define LOGIGATES_SPLITTER_H
+#ifndef LOGIGATES_MULTIPLEXER_H
+#define LOGIGATES_MULTIPLEXER_H
 
 #include <iostream>
-#include <algorithm>
+#include <cmath>
 #include "Base.h"
 #include "../../UI/Images.h"
 
 namespace LogiGates::Core::LogicalElements {
 
-    class Splitter : public Base {
+    class Multiplexer : public Base {
         public:
-            Splitter(UI::Workspace* workspace);
+            Multiplexer(UI::Workspace* workspace);
+            ~Multiplexer();
 
             void render() override;
             void perform(std::set<int> performedIDs = {}) override;
 
             SaveInfo getSaveInfo() override;
             void restoreFromSaveInfo(SaveInfo info, ImNodesEditorContext* editorCtx) override;
+
+        private:
+            std::vector<Pin*> inputPins;
+            std::vector<Pin*> numberPins;
     };
 
 }
 
-#endif //LOGIGATES_SPLITTER_H
+
+#endif //LOGIGATES_MULTIPLEXER_H

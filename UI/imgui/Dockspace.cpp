@@ -18,9 +18,11 @@
 
 namespace LogiGates::UI {
 
-    Dockspace::Dockspace(Workspace* workspace) : workspace(workspace) {
+    Dockspace::Dockspace() {
         preferencesWindow = new PreferencesWindow();
         aboutWindow = new AboutWindow();
+        welcomeWindow = new Welcome();
+        welcomeWindow->visible = true;
     }
 
     void Dockspace::render() {
@@ -70,7 +72,8 @@ namespace LogiGates::UI {
         ImGui::PopStyleVar(3);
         ImGui::PopFont();
 
-        ImGuiID dockspace_id = ImGui::GetID("DockS");
+        ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+        Workspace::dockID = dockspace_id;
         ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
         ImGui::PushFont(Fonts::openSans20);
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
@@ -79,29 +82,48 @@ namespace LogiGates::UI {
         ImGui::PushFont(Fonts::openSans24);
         if (ImGui::BeginMenuBar()) {
             if (ImGui::BeginMenu(Localization::localization[Localization::currentLocalization]["file"].c_str())) {
-                if (ImGui::MenuItem(Localization::localization[Localization::currentLocalization]["save"].c_str())) {
-                    const char* filter[1] = {"*.logigates"};
-                    const char* selection = tinyfd_saveFileDialog("Save file", nullptr, 1, filter, nullptr);
-
-                    if (selection != nullptr) {
-                        workspace->save(std::string(selection) + LOGIGATES_FILE_EXTENSION);
-                    }
+                if (ImGui::MenuItem(Localization::localization[Localization::currentLocalization]["newworkspace"].c_str())) {
+                    newWorkspaceWindow = true;
                 }
 
-                if (ImGui::MenuItem(Localization::localization[Localization::currentLocalization]["load"].c_str())) {
-                    const char* filter[1] = {"*.logigates"};
-                    const char* selection = tinyfd_openFileDialog("Open file", nullptr, 1, filter, nullptr, false);
+                if (ImGui::MenuItem(
+                        Localization::localization[Localization::currentLocalization]["load"].c_str())) {
+                    const char *filter[1] = {"*.logigates"};
+                    const char *selection = tinyfd_openFileDialog("Open file", nullptr, 1, filter, nullptr, false);
 
                     if (selection != nullptr) {
-                        workspace->load(std::string(selection));
-                    }
-                }
+                        workspaces.push_back(new Workspace(fs::path(selection).stem().string()));
+                        activeWorkspace = *(workspaces.end() - 1);
+                        (*(workspaces.end() - 1))->activeWorkspace = &activeWorkspace;
 
-                if (ImGui::MenuItem(Localization::localization[Localization::currentLocalization]["clear"].c_str())) {
-                    workspace->clear();
+                        activeWorkspace->load(std::string(selection));
+                    }
                 }
 
                 ImGui::Separator();
+
+                if (activeWorkspace != nullptr) {
+                    ImGui::PushStyleColor(ImGuiCol_Text, {0.7f, 0.7f, 0.7f, 1.f});
+                    ImGui::Text("%s", activeWorkspace->getName().c_str());
+                    ImGui::PopStyleColor();
+
+                    if (ImGui::MenuItem(
+                            Localization::localization[Localization::currentLocalization]["save"].c_str())) {
+                        const char *filter[1] = {"*.logigates"};
+                        const char *selection = tinyfd_saveFileDialog("Save file", nullptr, 1, filter, nullptr);
+
+                        if (selection != nullptr) {
+                            activeWorkspace->save(std::string(selection) + LOGIGATES_FILE_EXTENSION);
+                        }
+                    }
+
+                    if (ImGui::MenuItem(
+                            Localization::localization[Localization::currentLocalization]["clear"].c_str())) {
+                        activeWorkspace->clear();
+                    }
+
+                    ImGui::Separator();
+                }
 
                 if (ImGui::MenuItem(Localization::localization[Localization::currentLocalization]["preferences"].c_str())) {
                     preferencesWindow->visible = true;
@@ -121,7 +143,71 @@ namespace LogiGates::UI {
 
         ImGui::End();
 
+        if (newWorkspaceWindow) {
+            ImGui::PushFont(Fonts::openSans20);
+            ImGui::Begin(Localization::localization[Localization::currentLocalization]["newworkspace"].c_str(), &newWorkspaceWindow, ImGuiWindowFlags_NoDocking);
+            ImGui::PopFont();
+
+            ImGui::PushFont(Fonts::openSans24);
+            ImGui::Text("%s:", Localization::localization[Localization::currentLocalization]["workspacename"].c_str());
+
+            char workspaceName[255];
+            std::strcpy(workspaceName, newWorkspaceName.c_str());
+
+            ImGui::InputText("##workspacename", workspaceName, IM_ARRAYSIZE(workspaceName));
+
+            newWorkspaceName = std::string(workspaceName);
+
+            if (ImGui::Button(Localization::localization[Localization::currentLocalization]["create"].c_str())) {
+                if (isWorkspaceExists(newWorkspaceName)) {
+                    return;
+                }
+
+                workspaces.push_back(new Workspace(newWorkspaceName));
+                activeWorkspace = *(workspaces.end() - 1);
+                (*(workspaces.end() - 1))->activeWorkspace = &activeWorkspace;
+
+                newWorkspaceWindow = false;
+                newWorkspaceName = "";
+            }
+
+            ImGui::PopFont();
+
+            ImGui::End();
+        }
+
+        Workspace::editorMoveSpeed = preferencesWindow->preferences.editorMoveSpeed;
+
         preferencesWindow->render();
         aboutWindow->render();
+        welcomeWindow->render();
+
+        for (Workspace* w : workspaces) {
+            if (w->showWindow) {
+                w->render();
+            } else {
+
+                if (activeWorkspace == w) {
+                    activeWorkspace = nullptr;
+                }
+
+                workspaces.erase(std::find(workspaces.begin(), workspaces.end(), w));
+                delete w;
+            }
+        }
+    }
+
+    void Dockspace::setActiveWorkspace(Workspace *workspace) {
+        this->activeWorkspace = workspace;
+    }
+
+    bool Dockspace::isWorkspaceExists(std::string name) {
+        for (Workspace* w : workspaces) {
+            if (w->getName() == name) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

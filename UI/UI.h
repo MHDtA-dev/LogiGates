@@ -27,5 +27,6 @@
 #include "imgui/Drawable.h"
 #include "imgui/ElementsMenu.h"
 #include "imgui/Workspace.h"
+#include "imgui/Welcome.h"
 
 #endif //LOGIGATES_UI_H

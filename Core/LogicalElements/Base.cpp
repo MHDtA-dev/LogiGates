@@ -20,8 +20,8 @@
 namespace LogiGates::Core::LogicalElements {
 
     Base::Base(UI::Workspace* workspace) : workspace(workspace) {
-        id = nodeIDCounter;
-        nodeIDCounter++;
+        id = workspace->nodeIDCounter;
+        workspace->nodeIDCounter++;
     }
 
     void Base::perform(std::set<int> performedIDs) {
@@ -64,11 +64,11 @@ namespace LogiGates::Core::LogicalElements {
         return ret;
     }
 
-    void Base::restoreFromSaveInfo(SaveInfo info) {
+    void Base::restoreFromSaveInfo(SaveInfo info, ImNodesEditorContext* editorCtx) {
         this->id = info.id;
 
-        if (this->id > nodeIDCounter) {
-            nodeIDCounter = this->id + 1;
+        if (this->id > workspace->nodeIDCounter) {
+            workspace->nodeIDCounter = this->id + 1;
         }
 
         for (int i = 0; i < 255; i++) {
@@ -80,6 +80,7 @@ namespace LogiGates::Core::LogicalElements {
             if (info.connections[i] != -1) workspace->connectionQueue.push_back({pins[i]->getType() == PinType::OUTPUT ? pins[i]->getID() : info.connections[i], pins[i]->getType() == PinType::OUTPUT ? info.connections[i] : pins[i]->getID()});
         }
 
+        ImNodes::EditorContextSet(editorCtx);
         ImNodes::SetNodeEditorSpacePos(this->id, {info.positionX, info.positionY});
     }
 
@@ -94,6 +95,10 @@ namespace LogiGates::Core::LogicalElements {
         }
 
         return false;
+    }
+
+    UI::Workspace* Base::getWorkspace() {
+        return this->workspace;
     }
 
 }

@@ -74,6 +74,11 @@ namespace LogiGates::UI {
                 {
                         "fivebitnumdisp",
                         Images::icons["fivebitnumdisp"],
+                },
+
+                {
+                        "multiplexer",
+                        Images::icons["multiplexer"],
                 }
         };
     }

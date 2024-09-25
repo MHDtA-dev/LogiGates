@@ -47,7 +47,16 @@ namespace LogiGates::UI {
                 {"about",          "О программе"},
                 {"clear",          "Очистить"},
                 {"recursionWarnTitle",  "Обнаружена рекурсия"},
-                {"recursionWarn",  "Только что выполненное вами соединение создаёт рекурсию в цепи. Вероятнее\nвсего, данная цепь не будет работать корректно до момента\nустранения рекурсии."}
+                {"recursionWarn",  "Только что выполненное вами соединение создаёт рекурсию в цепи. Вероятнее\nвсего, данная цепь не будет работать корректно до момента\nустранения рекурсии."},
+                {"newworkspace",          "Новое рабочее пространство"},
+                {"workspacename",          "Имя рабочего пространства"},
+                {"create",          "Создать"},
+                {"movespeed",          "Скорость перемещения по редактору"},
+                {"welcome",          "Добро пожаловать"},
+                {"welcomeText",          "Добро пожаловать в LogiGates! Для начала работы вам\nнеобходимо создать или загрузить рабочее пространство.\nДля этого перейдите в меню \"Файл\" и выберите пункт\n\"Новое рабочее пространство\" или \"Загрузить\"."},
+                {"multiplexer",          "Мультиплексор"},
+                {"inputnumber",          "Номер входа"},
+                {"inputs",          "Входы"},
         };
 
         localization["en"] = {
@@ -78,7 +87,16 @@ namespace LogiGates::UI {
                 {"about",          "About"},
                 {"clear",          "Clear"},
                 {"recursionWarnTitle",  "Recursion is detected"},
-                {"recursionWarn",  "The connection you just made creates a recursion in the chain.\nMost likely, this chain will not work correctly until the\nrecursion is eliminated."}
+                {"recursionWarn",  "The connection you just made creates a recursion in the chain.\nMost likely, this chain will not work correctly until the\nrecursion is eliminated."},
+                {"newworkspace",          "New Workspace"},
+                {"workspacename",          "Workspace name"},
+                {"create",          "Create"},
+                {"movespeed",          "Editor move speed"},
+                {"welcome",          "Welcome"},
+                {"welcomeText", "Welcome to LogiGates! To get started, you\nneed to create or load a workspace.\nTo do this, go to the \"File\" menu and select\n\"New Workspace\" or \"Load\"."},
+                {"multiplexer",          "Multiplexer"},
+                {"inputnumber",          "Input number"},
+                {"inputs",          "Inputs"},
         };
     }
 

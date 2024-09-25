@@ -66,14 +66,13 @@ namespace LogiGates::Core::LogicalElements {
 
     void FiveBitNumberEncoder::perform(std::set<int> performedIDs) {
         if (this->checkRecursion(performedIDs)) return;
-        Pin *outputs[5] = {pins[4], pins[3], pins[2], pins[1], pins[0]};
 
         std::string binary = decToBaseReversed(number, 2);
         performedIDs.emplace(this->id);
 
-        for (int i = 0; i < 5; i++) {
-            outputs[i]->setState(i < binary.size() and binary[i] == '1');
-            outputs[i]->performNext(performedIDs);
+        for (int i = 0; i < pins.size(); i++) {
+            pins[i]->setState(i < binary.size() and binary[i] == '1');
+            pins[i]->performNext(performedIDs);
         }
     }
 
@@ -84,9 +83,9 @@ namespace LogiGates::Core::LogicalElements {
         return ret;
     }
 
-    void FiveBitNumberEncoder::restoreFromSaveInfo(SaveInfo info) {
+    void FiveBitNumberEncoder::restoreFromSaveInfo(SaveInfo info, ImNodesEditorContext* editorCtx) {
         this->number = info.additionalInfo[0];
-        Base::restoreFromSaveInfo(info);
+        Base::restoreFromSaveInfo(info, editorCtx);
     }
 
 }

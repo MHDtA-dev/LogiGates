@@ -52,9 +52,10 @@ namespace LogiGates::Core::LogicalElements {
             virtual void render();
 
             int getID();
+            UI::Workspace* getWorkspace();
 
             virtual SaveInfo getSaveInfo();
-            virtual void restoreFromSaveInfo(SaveInfo info);
+            virtual void restoreFromSaveInfo(SaveInfo info, ImNodesEditorContext* editorCtx);
 
             std::string getTypeName();
 
@@ -63,7 +64,6 @@ namespace LogiGates::Core::LogicalElements {
 
             int id = -1;
             std::vector<Pin*> pins;
-            inline static int nodeIDCounter = 1;
 
             std::string typeName;
 

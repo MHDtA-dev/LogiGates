@@ -63,7 +63,7 @@ namespace LogiGates::Core::LogicalElements {
     void Splitter::perform(std::set<int> performedIDs) {
         if (this->checkRecursion(performedIDs)) return;
         if (pins[0]->getConnectedWith() != -1)
-            pins[0]->setState(Pin::globalPinMap[pins[0]->getConnectedWith()]->getState());
+            pins[0]->setState(workspace->globalPinMap[pins[0]->getConnectedWith()]->getState());
 
         performedIDs.emplace(this->id);
 
@@ -80,13 +80,13 @@ namespace LogiGates::Core::LogicalElements {
         return ret;
     }
 
-    void Splitter::restoreFromSaveInfo(SaveInfo info) {
+    void Splitter::restoreFromSaveInfo(SaveInfo info, ImNodesEditorContext* editorCtx) {
 
         for (int i = 0; i < info.additionalInfo[0] - 1; i++) {
             pins.push_back(new Pin(this, PinType::OUTPUT));
         }
 
-        Base::restoreFromSaveInfo(info);
+        Base::restoreFromSaveInfo(info, editorCtx);
     }
 
 }

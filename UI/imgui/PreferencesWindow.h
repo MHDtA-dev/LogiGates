@@ -36,6 +36,7 @@ namespace LogiGates::UI {
 
     struct Preferences {
         char language[40];
+        int editorMoveSpeed = 5;
     };
 
     class PreferencesWindow : public Drawable {

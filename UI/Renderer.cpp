@@ -94,11 +94,14 @@ namespace LogiGates::UI {
 
 
     void Renderer::reconfigureSurface(int width, int height) {
+        wgpu::SurfaceCapabilities caps;
+        surface.getCapabilities(adapter, &caps);
+
         wgpu::SurfaceConfiguration config = {};
         config.nextInChain = nullptr;
         config.width = width;
         config.height = height;
-        config.format = surface.getPreferredFormat(adapter);
+        config.format = caps.formats[0];
         config.viewFormatCount = 0;
         config.viewFormats = nullptr;
         config.usage = wgpu::TextureUsage::RenderAttachment;
@@ -228,13 +231,16 @@ namespace LogiGates::UI {
     }
 
     void Renderer::initImGui() {
+        wgpu::SurfaceCapabilities caps;
+        surface.getCapabilities(adapter, &caps);
+
         ImGui::CreateContext();
         ImNodes::CreateContext();
         ImGui_ImplSDL2_InitForOther(window->getNativeHandle());
         ImGui_ImplWGPU_InitInfo info;
         info.Device = device;
         info.NumFramesInFlight = 3;
-        info.RenderTargetFormat = surface.getPreferredFormat(adapter);
+        info.RenderTargetFormat = caps.formats[0];
         info.DepthStencilFormat = wgpu::TextureFormat::Depth24Plus;
 
         ImGui_ImplWGPU_Init(&info);

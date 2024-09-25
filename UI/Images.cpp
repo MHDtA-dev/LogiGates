@@ -33,6 +33,7 @@ namespace LogiGates::UI {
         Images::icons["logo"] = renderer->loadTexture("icons/logo.png");
         Images::icons["fivebitnumenc"] = renderer->loadTexture("icons/fivebitnumenc.png");
         Images::icons["fivebitnumdisp"] = renderer->loadTexture("icons/fivebitnumdisp.png");
+        Images::icons["multiplexer"] = renderer->loadTexture("icons/multiplexer.png");
     }
 
 }

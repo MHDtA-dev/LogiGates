@@ -29,7 +29,7 @@ namespace LogiGates::Core {
 
     class App {
         public:
-            App();
+            App(int argc, char* argv[]);
             ~App();
 
             void run();
@@ -40,7 +40,6 @@ namespace LogiGates::Core {
 
             UI::Dockspace* dockspace;
             UI::ElementsMenu* elementsMenu;
-            UI::Workspace* workspace;
     };
 
 

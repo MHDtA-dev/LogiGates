@@ -15,6 +15,7 @@
 */
 
 #include "FiveBitNumberDisplay.h"
+#include "../../UI/imgui/Workspace.h"
 
 namespace LogiGates::Core::LogicalElements {
 
@@ -51,13 +52,13 @@ namespace LogiGates::Core::LogicalElements {
 
     void FiveBitNumberDisplay::perform(std::set<int> performedIDs) {
         if (this->checkRecursion(performedIDs)) return;
-        Pin* inputs[5] = {pins[0], pins[1], pins[2], pins[3], pins[4]};
+        Pin* inputs[5] = {pins[4], pins[3], pins[2], pins[1], pins[0]};
 
         number = 0;
 
         for (int i = 0; i < 5; i++) {
-            if (inputs[4 - i]->getConnectedWith() != -1) inputs[4 - i]->setState(Pin::globalPinMap[inputs[4 - i]->getConnectedWith()]->getState());
-            number += inputs[4 - i]->getState() * pow(2, i);
+            if (inputs[i]->getConnectedWith() != -1) inputs[i]->setState(workspace->globalPinMap[inputs[i]->getConnectedWith()]->getState());
+            number += inputs[i]->getState() * pow(2, 4 - i);
         }
 
         performedIDs.emplace(this->id);
@@ -75,9 +76,9 @@ namespace LogiGates::Core::LogicalElements {
         return ret;
     }
 
-    void FiveBitNumberDisplay::restoreFromSaveInfo(SaveInfo info) {
+    void FiveBitNumberDisplay::restoreFromSaveInfo(SaveInfo info, ImNodesEditorContext* editorCtx) {
         this->number = info.additionalInfo[0];
-        Base::restoreFromSaveInfo(info);
+        Base::restoreFromSaveInfo(info, editorCtx);
     }
 
 }

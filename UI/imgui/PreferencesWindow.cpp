@@ -67,6 +67,19 @@ namespace LogiGates::UI {
                 ImGui::EndCombo();
             }
 
+            ImGui::Text("%s:", Localization::localization[Localization::currentLocalization]["movespeed"].c_str());
+            if (ImGui::InputInt("##movespeed", &preferences.editorMoveSpeed)) {
+                Lunada::SerializeStruct<Preferences>(preferences, "preferences.lgpref");
+            }
+
+            if (preferences.editorMoveSpeed > 15) {
+                preferences.editorMoveSpeed = 15;
+            }
+
+            if (preferences.editorMoveSpeed <= 0) {
+                preferences.editorMoveSpeed = 1;
+            }
+
             ImGui::PopFont();
 
             ImGui::End();

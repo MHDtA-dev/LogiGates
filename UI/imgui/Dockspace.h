@@ -33,19 +33,30 @@
 #include "PreferencesWindow.h"
 #include "AboutWindow.h"
 #include "Workspace.h"
+#include "Welcome.h"
 
 namespace LogiGates::UI {
 
     class Dockspace : public Drawable {
         public:
-            Dockspace(Workspace* workspace);
+            Dockspace();
 
             void render() override;
+
+            void setActiveWorkspace(Workspace* workspace);
 
         private:
             PreferencesWindow* preferencesWindow;
             AboutWindow* aboutWindow;
-            Workspace* workspace;
+            Welcome* welcomeWindow;
+            Workspace* activeWorkspace = nullptr;
+
+            std::vector<Workspace*> workspaces;
+
+            bool newWorkspaceWindow = false;
+            std::string newWorkspaceName = "";
+
+            bool isWorkspaceExists(std::string name);
     };
 
 }

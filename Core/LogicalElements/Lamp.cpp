@@ -41,7 +41,7 @@ namespace LogiGates::Core::LogicalElements {
     void Lamp::perform(std::set<int> performedIDs) {
         if (this->checkRecursion(performedIDs)) return;
         if (pins[0]->getConnectedWith() != -1)
-            pins[0]->setState(Pin::globalPinMap[pins[0]->getConnectedWith()]->getState());
+            pins[0]->setState(workspace->globalPinMap[pins[0]->getConnectedWith()]->getState());
         pins[1]->setState(pins[0]->getState());
         performedIDs.emplace(this->id);
         pins[1]->performNext(performedIDs);

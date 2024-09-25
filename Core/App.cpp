@@ -18,14 +18,15 @@
 
 namespace LogiGates::Core {
 
-    App::App() {
+    App::App(int argc, char* argv[]) {
+        std::cout << argv[0] << std::endl;
+
         window = new UI::Window("LogiGates");
         renderer = new UI::Renderer(window);
 
         UI::Images::load(renderer);
 
-        workspace = new UI::Workspace();
-        dockspace = new UI::Dockspace(workspace);
+        dockspace = new UI::Dockspace();
         elementsMenu = new UI::ElementsMenu();
 
         UI::Localization::init();
@@ -48,7 +49,6 @@ namespace LogiGates::Core {
 
                 dockspace->render();
                 elementsMenu->render();
-                workspace->render();
 
                 renderer->end();
             }

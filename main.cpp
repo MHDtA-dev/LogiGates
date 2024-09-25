@@ -18,7 +18,7 @@
 
 int main(int argc, char* argv[]) {
 
-    LogiGates::Core::App app = LogiGates::Core::App();
+    LogiGates::Core::App app = LogiGates::Core::App(argc, argv);
     app.run();
 
     return 0;

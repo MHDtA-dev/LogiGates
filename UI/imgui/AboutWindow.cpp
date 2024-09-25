@@ -39,7 +39,7 @@ namespace LogiGates::UI {
             ImGui::SetCursorPos({curX, 75});
 
             ImGui::PushFont(Fonts::openSans30);
-            ImGui::Text("v1.1");
+            ImGui::Text("v1.2");
             ImGui::PopFont();
 
             ImGui::SetCursorPos({curXBefore - 25, 160});

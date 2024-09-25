@@ -40,8 +40,8 @@ namespace LogiGates::Core::LogicalElements {
 
     void And::perform(std::set<int> performedIDs) {
         if (this->checkRecursion(performedIDs)) return;
-        if (pins[0]->getConnectedWith() != -1) pins[0]->setState(Pin::globalPinMap[pins[0]->getConnectedWith()]->getState());
-        if (pins[1]->getConnectedWith() != -1) pins[1]->setState(Pin::globalPinMap[pins[1]->getConnectedWith()]->getState());
+        if (pins[0]->getConnectedWith() != -1) pins[0]->setState(workspace->globalPinMap[pins[0]->getConnectedWith()]->getState());
+        if (pins[1]->getConnectedWith() != -1) pins[1]->setState(workspace->globalPinMap[pins[1]->getConnectedWith()]->getState());
         pins[2]->setState(pins[0]->getState() and pins[1]->getState());
         performedIDs.emplace(this->id);
         pins[2]->performNext(performedIDs);

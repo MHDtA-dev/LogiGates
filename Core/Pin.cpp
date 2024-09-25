@@ -14,17 +14,20 @@
     limitations under the License.
 */
 
+#define PIN_DEBUG false
+
 #include "Pin.h"
 #include "LogicalElements/Base.h"
+#include "../UI/imgui/Workspace.h"
 
 namespace LogiGates::Core {
 
     Pin::Pin(LogicalElements::Base* element, LogiGates::Core::PinType type, std::string label) : element(
             element), type(type), label(label) {
-        id = idCounter;
-        idCounter++;
+        id = element->getWorkspace()->pinIdCounter;
+        element->getWorkspace()->pinIdCounter++;
 
-        globalPinMap[id] = this;
+        element->getWorkspace()->globalPinMap[id] = this;
     }
 
     PinType Pin::getType() {
@@ -37,12 +40,28 @@ namespace LogiGates::Core {
             ImGui::PushFont(UI::Fonts::openSans18);
             ImGui::Text(label.c_str());
             ImGui::PopFont();
+
+            if (PIN_DEBUG) {
+                ImGui::SameLine();
+                ImGui::PushFont(UI::Fonts::openSans18);
+                ImGui::Text(std::to_string(this->id).c_str());
+                ImGui::PopFont();
+            }
+
             ImNodes::EndInputAttribute();
         } else {
             ImNodes::BeginOutputAttribute(id);
             ImGui::PushFont(UI::Fonts::openSans18);
             ImGui::Text(label.c_str());
             ImGui::PopFont();
+
+            if (PIN_DEBUG) {
+                ImGui::SameLine();
+                ImGui::PushFont(UI::Fonts::openSans18);
+                ImGui::Text(std::to_string(this->id).c_str());
+                ImGui::PopFont();
+            }
+
             ImNodes::EndOutputAttribute();
         }
     }
@@ -50,8 +69,8 @@ namespace LogiGates::Core {
     void Pin::connect(int id) {
         if (this->type == PinType::OUTPUT) {
             connectedWith = id;
-            this->nextElement = globalPinMap[id]->element;
-            globalPinMap[id]->connectedWith = this->id;
+            this->nextElement = element->getWorkspace()->globalPinMap[id]->element;
+            element->getWorkspace()->globalPinMap[id]->connectedWith = this->id;
             this->element->perform();
         } else {
             connectedWith = id;
@@ -91,12 +110,12 @@ namespace LogiGates::Core {
 
     void Pin::disconnect(bool callInOther) {
         if (this->type == PinType::OUTPUT) {
-            if (this->connectedWith != -1 and callInOther) globalPinMap[this->connectedWith]->disconnect(false);
+            if (this->connectedWith != -1 and callInOther) element->getWorkspace()->globalPinMap[this->connectedWith]->disconnect(false);
             this->nextElement = nullptr;
             this->connectedWith = -1;
         } else {
             if (this->connectedWith != -1) {
-                if (callInOther) globalPinMap[this->connectedWith]->disconnect(false);
+                if (callInOther) element->getWorkspace()->globalPinMap[this->connectedWith]->disconnect(false);
                 this->connectedWith = -1;
                 this->state = false;
                 this->element->perform();
@@ -107,8 +126,8 @@ namespace LogiGates::Core {
     void Pin::setID(int id) {
         this->id = id;
 
-        if (id > idCounter) {
-            idCounter = id + 1;
+        if (id > element->getWorkspace()->pinIdCounter) {
+            element->getWorkspace()->pinIdCounter = id + 1;
         }
     }
 

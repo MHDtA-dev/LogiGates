@@ -28,5 +28,6 @@
 #include "Equivalent.h"
 #include "FiveBitNumberEncoder.h"
 #include "FiveBitNumberDisplay.h"
+#include "Multiplexer.h"
 
 #endif //LOGIGATES_LOGICALELEMENTS_H

@@ -30,6 +30,10 @@ namespace LogiGates::Core::LogicalElements {
     class Base;
 }
 
+namespace LogiGates::UI {
+    class Workspace;
+}
+
 namespace LogiGates::Core {
 
     enum PinType {
@@ -57,8 +61,6 @@ namespace LogiGates::Core {
 
             void performNext(std::set<int> performedIDs = {}); // Only for output
 
-            inline static std::unordered_map<int, Pin*> globalPinMap;
-
         private:
             LogicalElements::Base* element;
             LogicalElements::Base* nextElement = nullptr; // Only for output
@@ -69,7 +71,6 @@ namespace LogiGates::Core {
             int id = -1;
             bool state = false;
 
-            inline static int idCounter = 1;
 
     };
 

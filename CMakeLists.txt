@@ -74,7 +74,11 @@ add_executable(LogiGates main.cpp
         UI/imgui/AboutWindow.cpp
         UI/imgui/AboutWindow.h
         Core/LogicalElements/FiveBitNumberDisplay.cpp
-        Core/LogicalElements/FiveBitNumberDisplay.h)
+        Core/LogicalElements/FiveBitNumberDisplay.h
+        UI/imgui/Welcome.cpp
+        UI/imgui/Welcome.h
+        Core/LogicalElements/Multiplexer.cpp
+        Core/LogicalElements/Multiplexer.h)
 
 
 target_sources(LogiGates PRIVATE
